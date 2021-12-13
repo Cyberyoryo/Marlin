@@ -40,6 +40,7 @@ uint8_t ControllerFan::speed;
 
 void ControllerFan::setup() {
   SET_OUTPUT(CONTROLLER_FAN_PIN);
+  SET_OUTPUT(CONTROLLER_FAN_PIN2);
   init();
 }
 
@@ -79,6 +80,11 @@ void ControllerFan::update() {
         set_pwm_duty(pin_t(CONTROLLER_FAN_PIN), speed);
       else
         WRITE(CONTROLLER_FAN_PIN, speed > 0);
+
+      if (PWM_PIN(CONTROLLER_FAN_PIN2))
+        set_pwm_duty(pin_t(CONTROLLER_FAN_PIN2), speed);
+      else
+        WRITE(CONTROLLER_FAN_PIN2, speed > 0);
     #endif
   }
 }

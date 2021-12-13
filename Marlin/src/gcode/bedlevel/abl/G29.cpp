@@ -68,6 +68,10 @@
   #include "../../../module/tool_change.h"
 #endif
 
+#if ENABLED (BABYSTEP_DISPLAY_TOTAL)
+  #include "../../../feature/babystep.h"
+#endif
+
 #if ABL_USES_GRID
   #if ENABLED(PROBE_Y_FIRST)
     #define PR_OUTER_VAR  abl.meshCount.x
@@ -249,6 +253,15 @@ G29_TYPE GcodeSuite::G29() {
   // Don't allow auto-leveling without homing first
   if (homing_needed_error()) G29_RETURN(false);
 
+  #if ENABLED(BLTOUCH)
+    if(!probe.is_exist()) {  // probe not exist
+      #if HAS_DISPLAY        // It's means that the Bltouch is not ready
+        ui.set_status("Bltouch not ready!");
+      #endif
+      SERIAL_ECHO_MSG("(Optional) Please check whether your printer has Bltouch");
+      G29_RETURN(false);
+    }
+  #endif
   #if ENABLED(AUTO_BED_LEVELING_3POINT)
     vector_3 points[3];
     probe.get_three_points(points);
@@ -886,6 +899,14 @@ G29_TYPE GcodeSuite::G29() {
   TERN_(HAS_DWIN_E3V2_BASIC, DWIN_CompletedLeveling());
 
   report_current_position();
+
+  if (isnan(abl.measured_z)) {
+    reset_bed_level();
+  } else {
+    #if ENABLED (BABYSTEP_DISPLAY_TOTAL)
+      babystep.reset_total(Z_AXIS);
+    #endif
+  }
 
   TERN_(FULL_REPORT_TO_HOST_FEATURE, set_and_report_grblstate(M_IDLE));
 

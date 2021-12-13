@@ -257,7 +257,7 @@ PGMSTR(M112_KILL_STR, "M112 Shutdown");
 MarlinState marlin_state = MF_INITIALIZING;
 
 // For M109 and M190, this flag may be cleared (by M108) to exit the wait loop
-bool wait_for_heatup = true;
+bool wait_for_heatup = false;
 
 // For M0/M1, this flag may be cleared (by M108) to exit the wait-for-user loop
 #if HAS_RESUME_CONTINUE
@@ -739,7 +739,86 @@ inline void manage_inactivity(const bool no_stepper_sleep=false) {
     }
   #endif
 }
+#if ENABLED(PRINTER_EVENT_LEDS)
+  #include "./feature/leds/printer_event_leds.h"
+  enum {
+    HEATING_IDLE,
+    HEATING,
+    HEATED,
+  };
 
+  #define TEMP_RANGE 2
+
+  void loopLED(){
+    if (wait_for_heatup) return;
+
+    {
+      static uint8_t hotendOn = HEATING_IDLE;
+      static float hotend_start_temp;
+
+      float cur_hotend = thermalManager.degHotend(0);
+      float cur_target_hotend = thermalManager.degTargetHotend(0);
+
+      if (cur_target_hotend > 0)
+      {
+        if (cur_hotend + TEMP_RANGE < cur_target_hotend)
+        {
+          if (hotendOn == HEATING_IDLE)
+          {
+            hotendOn = HEATING;
+            hotend_start_temp = cur_hotend;
+            printerEventLEDs.onHotendHeatingStart();
+          }
+          else
+          {
+            printerEventLEDs.onHotendHeating(hotend_start_temp, cur_hotend, cur_target_hotend);
+          }
+        }
+        else
+        {
+          if (hotendOn == HEATING)
+          {
+            hotendOn = HEATING_IDLE;
+            printerEventLEDs.onHeatingDone();
+          }
+        }
+      }
+    }
+
+    {
+      static uint8_t bedOn = HEATING_IDLE;
+      static float bed_start_temp;
+
+      float cur_bed = thermalManager.degBed();
+      float cur_target_bed = thermalManager.degTargetBed();
+
+      if (cur_target_bed > 0)
+      {
+        if (cur_bed + TEMP_RANGE < cur_target_bed)
+        {
+          if (bedOn == HEATING_IDLE)
+          {
+            bedOn = HEATING;
+            bed_start_temp = cur_bed;
+            printerEventLEDs.onBedHeatingStart();
+          }
+          else
+          {
+            printerEventLEDs.onBedHeating(bed_start_temp, cur_bed, cur_target_bed);
+          }
+        }
+        else
+        {
+          if (bedOn == HEATING)
+          {
+            bedOn = HEATING_IDLE;
+            printerEventLEDs.onHeatingDone();
+          }
+        }
+      }
+    }
+  }
+#endif
 /**
  * Standard idle routine keeps the machine alive:
  *  - Core Marlin activities
@@ -763,6 +842,11 @@ inline void manage_inactivity(const bool no_stepper_sleep=false) {
  *  - Handle Joystick jogging
  */
 void idle(bool no_stepper_sleep/*=false*/) {
+
+  #if ENABLED(PRINTER_EVENT_LEDS)
+    loopLED();
+  #endif
+
   #if ENABLED(MARLIN_DEV_MODE)
     static uint16_t idle_depth = 0;
     if (++idle_depth > 5) SERIAL_ECHOLNPGM("idle() call depth: ", idle_depth);

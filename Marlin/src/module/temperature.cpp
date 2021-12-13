@@ -2320,6 +2320,7 @@ void Temperature::init() {
   #endif
   #if ENABLED(USE_CONTROLLER_FAN)
     INIT_FAN_PIN(CONTROLLER_FAN_PIN);
+    INIT_FAN_PIN(CONTROLLER_FAN_PIN2);
   #endif
 
   TERN_(HAS_MAXTC_SW_SPI, max_tc_spi.init());

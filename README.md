@@ -1,3 +1,29 @@
+# BIQU-B1 with `BIGTREETECH SKR 2` motherboard
+
+The default configuration files of this source code is the configuration of `BIGTREETECH SKR 2` on `BIQU-B1` priner, There is no need to modify the configuration unless new DIY features are needed
+
+
+# BIQU-B1 with `BIGTREETECH SKR V1.4` motherboard
+
+The default configuration files of this source code is the configuration of `BIGTREETECH SKR 2` on `BIQU-B1` priner, So you need to make the following changes if your motherboard is `BIGTREETECH SKR V1.4`.
+* `default_envs = LPC1768`                                 
+  ![image](https://user-images.githubusercontent.com/38851044/116395104-44365f80-a856-11eb-98ed-9cb9b6e86203.png)
+* `#define SERIAL_PORT 0`
+* `#define MOTHERBOARD BOARD_BTT_SKR_V1_4`
+  ![image](https://user-images.githubusercontent.com/38851044/116395190-64661e80-a856-11eb-9e1b-af8a79a1dc04.png)
+* Comment out `#define USE_CONTROLLER_FAN` Because `BIGTREETECH SKR V1.4` has no extra fan port for `USE_CONTROLLER_FAN`, (Printer box / motherboard cooling fan)
+  ![image](https://user-images.githubusercontent.com/38851044/116395468-beff7a80-a856-11eb-819c-712cecb21278.png)
+
+#  BIQU-B2 upgraded from BIQU-B1
+
+* Change the printer name from `BIQU-B1` to `BIQU-B2`
+  ![image](https://user-images.githubusercontent.com/38851044/117102760-8fe38e80-adab-11eb-9753-8e3037a2eb33.png)
+  ![image](https://user-images.githubusercontent.com/38851044/117102802-a7bb1280-adab-11eb-8d40-0697b463df90.png)
+* `#define EXTRUDERS 2` Set the extruder number to 2 and `#define SINGLENOZZLE` set single nozzle (2 in 1 out)
+  ![image](https://user-images.githubusercontent.com/38851044/117103345-c66dd900-adac-11eb-897c-fedbab6cc6ac.png)
+* `#define E1_DRIVER_TYPE TMC2208` Set the drive of the second extruder to TMC2208, Because the official driver of BIQU-B2 is TMC2225 (exactly the same as TMC2208)
+  ![image](https://user-images.githubusercontent.com/38851044/117103760-7d6a5480-adad-11eb-83d4-ba925bba9c59.png)
+
 # Marlin 3D Printer Firmware
 
 ![GitHub](https://img.shields.io/github/license/marlinfirmware/marlin.svg)

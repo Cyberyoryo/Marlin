@@ -72,7 +72,7 @@ class BLTouch {
 public:
   static void init(const bool set_voltage=false);
   static bool last_written_mode; // Initialized by settings.load, 0 = Open Drain; 1 = 5V Drain
-
+  static bool is_exist();
   // DEPLOY and STOW are wrapped for error handling - these are used by homing and by probing
   static bool deploy()              { return deploy_proc(); }
   static bool stow()                { return stow_proc(); }

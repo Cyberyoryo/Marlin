@@ -94,13 +94,13 @@ void GcodeSuite::M1001() {
 
   // Update the status LED color
   #if HAS_LEDS_OFF_FLAG
-    if (long_print) {
+    /*if (long_print) {
       printerEventLEDs.onPrintCompleted();
       TERN_(EXTENSIBLE_UI, ExtUI::onUserConfirmRequired(GET_TEXT_F(MSG_PRINT_DONE)));
       TERN_(HOST_PROMPT_SUPPORT, hostui.prompt_do(PROMPT_USER_CONTINUE, GET_TEXT_F(MSG_PRINT_DONE), FPSTR(CONTINUE_STR)));
       TERN_(HAS_RESUME_CONTINUE, wait_for_user_response(SEC_TO_MS(TERN(HAS_LCD_MENU, PE_LEDS_COMPLETED_TIME, 30))));
       printerEventLEDs.onResumeAfterWait();
-    }
+    }*/
   #endif
 
   // Inject SD_FINISHED_RELEASECOMMAND, if any
